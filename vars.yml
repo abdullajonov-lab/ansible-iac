@@ -1,0 +1,4 @@
+app_server_ip: "65.109.5.191"
+app_server_port: "80"
+http_port: 8060
+nginx_server_name: "ansibile.abdullajonov.uz"

@@ -1,13 +1,40 @@
 - name: Install Neofetch on Ubuntu
+
   hosts: all
   become: true
   tasks:
+    - name: Include Vars
+      ansible.builtin.include_vars:
+        file: vars.yml
+
     - name: Update apt cache
-      apt:
+      ansible.builtin.apt:
         update_cache: yes
         cache_valid_time: 3600
 
-    - name: Install neofetch
+    - name: Install Nginx
       ansible.builtin.apt:
-        name: neofetch
+        name: nginx
         state: present
+    
+    - name: Enable and start Nginx service
+      ansible.builtin.service:
+        name: nginx
+        enabled: true
+        state: started
+    
+    - name: Create and Copy Nginx config
+      ansible.builtin.template:
+        src: ./templates/nginx.j2
+        dest: /etc/nginx/sites-available/default
+        # force: yes # none of them worked [yes, no, true, false]
+      notify: Restart Nginx
+
+  handlers:
+    - name: Restart Nginx
+      become: true
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+
+    
